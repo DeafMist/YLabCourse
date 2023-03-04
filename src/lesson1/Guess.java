@@ -5,8 +5,7 @@ import java.util.Scanner;
 
 public class Guess {
     public static void main(String[] args) throws Exception {
-//        int number = new Random().nextInt(99) + 1;
-        int number = 22;
+        int number = new Random().nextInt(99) + 1;
         int maxAttempts = 10;
         System.out.println("Я загадал число от 1 до 99. У тебя " + maxAttempts + " попыток угадать.");
         try (Scanner scanner = new Scanner(System.in)) {

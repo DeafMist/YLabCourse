@@ -3,10 +3,7 @@ package lesson2.task4;
 public class SnilsValidatorImpl implements SnilsValidator {
     @Override
     public boolean validate(String snils) {
-        if (snils == null || snils.isEmpty() || snils.isBlank() || snils.length() != 11 ||
-                !Character.isDigit(snils.charAt(9)) || !Character.isDigit(snils.charAt(10))) {
-            return false;
-        }
+        if (simpleCheck(snils)) return false;
 
         int n = 11;
         int total = 0;
@@ -18,15 +15,7 @@ public class SnilsValidatorImpl implements SnilsValidator {
             total += Character.digit(symbol, 10) * i;
         }
 
-        int prevLast = Character.digit(snils.charAt(n - 2), 10);
-        int last = Character.digit(snils.charAt(n - 1), 10);
-        int lastTwoSymbols;
-        if (prevLast != 0) {
-            lastTwoSymbols = prevLast * 10 + last;
-        }
-        else {
-            lastTwoSymbols = last;
-        }
+        int lastTwoSymbols = Character.digit(snils.charAt(n - 2), 10) * 10 + Character.digit(snils.charAt(n - 1), 10);
 
         int number;
         if (total < 100) {
@@ -46,5 +35,10 @@ public class SnilsValidatorImpl implements SnilsValidator {
         }
 
         return number == lastTwoSymbols;
+    }
+
+    private static boolean simpleCheck(String snils) {
+        return snils == null || snils.isEmpty() || snils.isBlank() || snils.length() != 11 ||
+                !Character.isDigit(snils.charAt(9)) || !Character.isDigit(snils.charAt(10));
     }
 }

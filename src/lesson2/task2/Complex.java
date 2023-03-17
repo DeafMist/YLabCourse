@@ -1,47 +1,51 @@
 package lesson2.task2;
 
 public class Complex {
-    private final double re;
-    private final double im;
+    private final double realPart;
+    private final double imaginaryPart;
 
-    public Complex(double re) {
-        this(re, 0);
+    public Complex(double realPart) {
+        this(realPart, 0);
     }
 
-    public Complex(double re, double im) {
-        this.re = re;
-        this.im = im;
+    public Complex(double realPart, double imaginaryPart) {
+        this.realPart = realPart;
+        this.imaginaryPart = imaginaryPart;
     }
 
     public Complex sum(Complex c) {
-        return new Complex(this.getRe() + c.getRe(), this.getIm() + c.getIm());
+        return new Complex(
+                this.getRealPart() + c.getRealPart(),
+                this.getImaginaryPart() + c.getImaginaryPart());
     }
 
     public Complex sub(Complex c) {
-        return new Complex(this.getRe() - c.getRe(), this.getIm() - c.getIm());
+        return new Complex(
+                this.getRealPart() - c.getRealPart(),
+                this.getImaginaryPart() - c.getImaginaryPart());
     }
 
     public Complex mult(Complex c) {
         return new Complex(
-                this.getRe() * c.getRe() - this.getIm() * c.getIm(),
-                this.getRe() * c.getIm() + this.getIm() * c.getRe()
+                this.getRealPart() * c.getRealPart() - this.getImaginaryPart() * c.getImaginaryPart(),
+                this.getRealPart() * c.getImaginaryPart() + this.getImaginaryPart() * c.getRealPart()
         );
     }
 
     public double abs() {
-        return Math.sqrt(this.getRe() * this.getRe() + this.getIm() * this.getIm());
+        return Math.sqrt(this.getRealPart() * this.getRealPart() + this.getImaginaryPart() * this.getImaginaryPart());
     }
 
-    public double getRe() {
-        return re;
+    public double getRealPart() {
+        return realPart;
     }
 
-    public double getIm() {
-        return im;
+    public double getImaginaryPart() {
+        return imaginaryPart;
     }
 
     @Override
     public String toString() {
-        return this.getRe() + " + " + this.getIm() + "i";
+        return this.getRealPart() + " + " + this.getImaginaryPart() + "i";
     }
 }

@@ -8,10 +8,10 @@ import java.util.Scanner;
 public class Sorter {
 
     public File sortFile(File dataFile) throws IOException {
-        String file1 = "src/lesson3/task5/tempFile1.txt";
-        String file2 = "src/lesson3/task5/tempFile2.txt";
+        String file1 = "src/main/java/lesson3/task5/tempFile1.txt";
+        String file2 = "src/main/java/lesson3/task5/tempFile2.txt";
 
-        File sortedFile = new File("src/lesson3/task5/sortedFile.txt");
+        File sortedFile = new File("src/main/java/lesson3/task5/sortedFile.txt");
         Files.deleteIfExists(sortedFile.toPath());
         Files.copy(dataFile.toPath(), sortedFile.toPath());
 

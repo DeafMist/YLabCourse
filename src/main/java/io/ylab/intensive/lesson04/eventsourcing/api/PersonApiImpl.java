@@ -37,11 +37,11 @@ public class PersonApiImpl implements PersonApi {
   public void deletePerson(Long personId) {
     try (Connection connection = connectionFactory.newConnection();
          Channel channel = connection.createChannel()) {
-      channel.exchangeDeclare(exchangeName, BuiltinExchangeType.DIRECT);
+      channel.exchangeDeclare(exchangeName, BuiltinExchangeType.TOPIC);
       channel.queueDeclare(queueName, true, false, false, null);
       channel.queueBind(queueName, exchangeName, "*");
 
-      channel.basicPublish(exchangeName, "key", null, ("DELETE " + personId).getBytes());
+      channel.basicPublish(exchangeName, "*", null, ("DELETE " + personId).getBytes());
     } catch (IOException | TimeoutException e) {
       e.printStackTrace();
     }
@@ -51,13 +51,13 @@ public class PersonApiImpl implements PersonApi {
   public void savePerson(Long personId, String firstName, String lastName, String middleName) {
     try (Connection connection = connectionFactory.newConnection();
          Channel channel = connection.createChannel()) {
-      channel.exchangeDeclare(exchangeName, BuiltinExchangeType.DIRECT);
+      channel.exchangeDeclare(exchangeName, BuiltinExchangeType.TOPIC);
       channel.queueDeclare(queueName, true, false, false, null);
       channel.queueBind(queueName, exchangeName, "*");
 
       Person person = new Person(personId, firstName, lastName, middleName);
 
-      channel.basicPublish(exchangeName, "key", null,
+      channel.basicPublish(exchangeName, "*", null,
               ("SAVE " + person).getBytes());
     } catch (IOException | TimeoutException e) {
       e.printStackTrace();

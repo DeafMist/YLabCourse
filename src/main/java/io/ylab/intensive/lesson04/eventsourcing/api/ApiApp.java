@@ -22,7 +22,7 @@ public class ApiApp {
     System.out.println(personApi.findAll());
 
     personApi.deletePerson(2L);
-    personApi.findPerson(2L);
+    System.out.println(personApi.findPerson(2L));
   }
 
   private static DataSource initDb() throws Exception {

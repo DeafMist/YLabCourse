@@ -17,33 +17,28 @@ public class FileSortImpl implements FileSorter {
   public File sort(File data) {
     saveNumbers(data);
 
-    File sortedFile = saveSortedNumbersToFile();
-
-    return sortedFile;
+    return saveSortedNumbersToFile();
   }
 
   private File saveSortedNumbersToFile() {
     File sortedFile = new File("src/main/java/io/ylab/intensive/lesson04/filesort/sortedFile.txt");
-    try {
+
+    try (Connection connection = dataSource.getConnection();
+         Statement statement = connection.createStatement())  {
       Files.deleteIfExists(sortedFile.toPath());
 
-      try (Connection connection = dataSource.getConnection();
-           Statement statement = connection.createStatement())  {
+      ResultSet resultSet = statement.executeQuery("SELECT val FROM numbers ORDER BY val DESC");
 
-        ResultSet resultSet = statement.executeQuery("SELECT val FROM numbers ORDER BY val DESC");
-        PrintWriter pw = new PrintWriter(sortedFile);
-        while (resultSet.next()) {
-          pw.println(resultSet.getLong(1));
-        }
+      PrintWriter pw = new PrintWriter(sortedFile);
 
-        pw.flush();
-        pw.close();
-        resultSet.close();
-      } catch (SQLException e) {
-        e.printStackTrace();
+      while (resultSet.next()) {
+        pw.println(resultSet.getLong(1));
       }
 
-    } catch (IOException e) {
+      pw.flush();
+      pw.close();
+      resultSet.close();
+    } catch (SQLException | IOException e) {
       e.printStackTrace();
     }
 
@@ -64,6 +59,7 @@ public class FileSortImpl implements FileSorter {
             long number = scanner.nextLong();
             statement.setLong(1, number);
             statement.addBatch();
+            i++;
           }
           try {
             statement.executeBatch();
@@ -72,7 +68,8 @@ public class FileSortImpl implements FileSorter {
             e.printStackTrace();
           }
         }
-      } catch (FileNotFoundException e) {
+      }
+      catch (FileNotFoundException e) {
         e.printStackTrace();
       }
     }

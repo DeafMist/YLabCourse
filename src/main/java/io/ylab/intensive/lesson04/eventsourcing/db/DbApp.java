@@ -17,6 +17,12 @@ import java.sql.SQLException;
 public class DbApp {
   private static String queueName = "queue";
 
+  private static final String insertQuery = "INSERT INTO person (first_name, last_name, middle_name, person_id) VALUES (?, ?, ?, ?)";
+
+  private static final String updateQuery = "UPDATE person SET first_name=?, last_name=?, middle_name=? WHERE person_id=?";
+
+  public static final String selectQuery = "SELECT * FROM person WHERE person_id=?";
+
   public static void main(String[] args) throws Exception {
     DataSource dataSource = initDb();
     ConnectionFactory connectionFactory = initMQ();
@@ -46,39 +52,34 @@ public class DbApp {
 
   private static void savePerson(DataSource dataSource, Person person) {
     try (java.sql.Connection connection = dataSource.getConnection();
-         PreparedStatement insertionStatement = connection.prepareStatement("INSERT INTO person " +
-                 "(person_id, first_name, last_name, middle_name) VALUES " +
-                 "(?, ?, ?, ?)");
-         PreparedStatement updateStatement = connection.prepareStatement("UPDATE person " +
-                 "SET first_name=?, last_name=?, middle_name=? WHERE person_id=?");
-         PreparedStatement selectStatement = connection.prepareStatement("SELECT * FROM person WHERE person_id=?")) {
+         PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+         PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
+         PreparedStatement selectStatement = connection.prepareStatement(selectQuery)) {
       selectStatement.setLong(1, person.getId());
 
       ResultSet selectSet = selectStatement.executeQuery();
-      if (selectSet.next()) {
-        updateStatement.setString(1, person.getName());
-        updateStatement.setString(2, person.getLastName());
-        updateStatement.setString(3, person.getMiddleName());
-        updateStatement.setLong(4, person.getId());
 
-        updateStatement.executeUpdate();
-        System.out.println("Произошло обновление данных человека с id = " + person.getId());
+      if (selectSet.next()) {
+        sendStatement(person, updateStatement, "обновление");
       }
       else {
-        insertionStatement.setLong(1, person.getId());
-        insertionStatement.setString(2, person.getName());
-        insertionStatement.setString(3, person.getLastName());
-        insertionStatement.setString(4, person.getMiddleName());
-
-
-        insertionStatement.executeUpdate();
-        System.out.println("Произошло добавление человека с id = " + person.getId());
+        sendStatement(person, insertStatement, "добавление");
       }
 
       selectSet.close();
     } catch (SQLException e) {
       e.printStackTrace();
     }
+  }
+
+  private static void sendStatement(Person person, PreparedStatement updateStatement, String message) throws SQLException {
+    updateStatement.setString(1, person.getName());
+    updateStatement.setString(2, person.getLastName());
+    updateStatement.setString(3, person.getMiddleName());
+    updateStatement.setLong(4, person.getId());
+
+    updateStatement.executeUpdate();
+    System.out.println("Произошло " + message + " данных человека с id = " + person.getId());
   }
 
   private static void deletePerson(DataSource dataSource, long personId) {

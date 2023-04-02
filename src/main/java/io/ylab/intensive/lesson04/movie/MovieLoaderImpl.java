@@ -57,63 +57,55 @@ public class MovieLoaderImpl implements MovieLoader {
 
     try (Connection connection = dataSource.getConnection();
          PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
-      if (movie.getYear() != null) {
-        preparedStatement.setInt(1, movie.getYear());
-      } else {
-        preparedStatement.setNull(1, Types.INTEGER);
-      }
 
-      if (movie.getLength() != null) {
-        preparedStatement.setInt(2, movie.getLength());
-      } else {
-        preparedStatement.setNull(2, Types.INTEGER);
-      }
+      setIntOrNull(preparedStatement, movie.getYear(), 1);
 
-      if (movie.getTitle() != null) {
-        preparedStatement.setString(3, movie.getTitle());
-      } else {
-        preparedStatement.setNull(3, Types.VARCHAR);
-      }
+      setIntOrNull(preparedStatement, movie.getLength(), 2);
 
-      if (movie.getSubject() != null) {
-        preparedStatement.setString(4, movie.getSubject());
-      } else {
-        preparedStatement.setNull(4, Types.VARCHAR);
-      }
+      setStringOrNull(preparedStatement, movie.getTitle(), 3);
 
-      if (movie.getActors() != null) {
-        preparedStatement.setString(5, movie.getActors());
-      } else {
-        preparedStatement.setNull(5, Types.VARCHAR);
-      }
+      setStringOrNull(preparedStatement, movie.getSubject(), 4);
 
-      if (movie.getActress() != null) {
-        preparedStatement.setString(6, movie.getActress());
-      } else {
-        preparedStatement.setNull(6, Types.VARCHAR);
-      }
+      setStringOrNull(preparedStatement, movie.getActors(), 5);
 
-      if (movie.getDirector() != null) {
-        preparedStatement.setString(7, movie.getDirector());
-      } else {
-        preparedStatement.setNull(7, Types.VARCHAR);
-      }
+      setStringOrNull(preparedStatement, movie.getActress(), 6);
 
-      if (movie.getPopularity() != null) {
-        preparedStatement.setInt(8, movie.getPopularity());
-      } else {
-        preparedStatement.setNull(8, Types.INTEGER);
-      }
+      setStringOrNull(preparedStatement, movie.getDirector(), 7);
 
-      if (movie.getAwards() != null) {
-        preparedStatement.setBoolean(9, movie.getAwards());
-      } else {
-        preparedStatement.setNull(9, Types.BOOLEAN);
-      }
+      setIntOrNull(preparedStatement, movie.getPopularity(), 8);
+
+      setBoolOrNull(preparedStatement, movie.getAwards(), 9);
 
       preparedStatement.executeUpdate();
     } catch (SQLException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  private void setIntOrNull(PreparedStatement preparedStatement, Integer field, int i) throws SQLException {
+    if (field != null) {
+      preparedStatement.setInt(i, field);
+    }
+    else {
+      preparedStatement.setNull(i, Types.INTEGER);
+    }
+  }
+
+  private void setStringOrNull(PreparedStatement preparedStatement, String field, int i) throws SQLException {
+    if (field != null) {
+      preparedStatement.setString(i, field);
+    }
+    else {
+      preparedStatement.setNull(i, Types.VARCHAR);
+    }
+  }
+
+  private void setBoolOrNull(PreparedStatement preparedStatement, Boolean field, int i) throws SQLException {
+    if (field != null) {
+      preparedStatement.setBoolean(i, field);
+    }
+    else {
+      preparedStatement.setNull(i, Types.BOOLEAN);
     }
   }
 }
